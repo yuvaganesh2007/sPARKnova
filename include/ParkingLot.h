@@ -33,16 +33,16 @@ public:
     explicit ParkingLot(int numberOfSpots);
     bool parkVehicle(std::unique_ptr<Vehicle> vehicle);
      bool createCheckoutQuote(
-        const std::string& vehicleNumber,
+        string& vehicleNumber,
         int parkedHours,
         int parkedMinutes,
         CheckoutQuote& quote);
 
     bool completeCheckout(CheckoutQuote& quote);
-    void recordPaymentFailure(CheckoutQuote& quote);
+    void recordPaymentFailure( const CheckoutQuote& quote);
 
     void displayStatus();
-    void displayPaymentHistory();
+    void displayPaymentHistory() const;
 };
 
 #endif
