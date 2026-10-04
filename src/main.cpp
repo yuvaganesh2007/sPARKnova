@@ -1,16 +1,10 @@
-#include "../include/Vehicle.h"
-#include<bits/stdc++.h>
-using namespace std;
+#include "../include/admin.h"
 
 int main() {
-    Car c;
-    Bike b;
-    Vehicle* ptr;
-    ptr=&c;
-    setDetails(ptr);
-    ptr=&b;
-    setDetails(ptr);
-    getDetails(ptr);
-    ptr=&c;
-    getDetails(ptr);
+    ParkingLot parkingLot(10);
+    Admin admin("admin123", parkingLot);
+
+    admin.start();
+
+    return 0;
 }

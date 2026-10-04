@@ -13,11 +13,10 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
         return false;
     }
 
-    for (const ParkingSpot& spot : spots) {
+    for (ParkingSpot& spot : spots) {
         Vehicle* parked = spot.getVehicle();
 
-        if (parked != nullptr &&
-            parked->getNumber() == vehicle->getNumber()) {
+        if (parked != nullptr && parked->getNumber() == vehicle->getNumber()) {
             std::cout << "That vehicle is already parked.\n";
             return false;
         }
@@ -42,8 +41,7 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
 bool ParkingLot::removeVehicle(const string& vehicleNumber) {
     for (ParkingSpot& spot : spots) {
         if (spot.releaseVehicle(vehicleNumber)) {
-            cout << "Vehicle removed from spot "
-                      << spot.getSpotNumber() << ".\n";
+            cout << "Vehicle removed from spot "<< spot.getSpotNumber() << ".\n";
             return true;
         }
     }
@@ -52,10 +50,10 @@ bool ParkingLot::removeVehicle(const string& vehicleNumber) {
     return false;
 }
 
-void ParkingLot::displayStatus() const {
+void ParkingLot::displayStatus()  {
     cout << "\n--- Parking Lot Status ---\n";
 
-    for (const ParkingSpot& spot : spots) {
+    for ( ParkingSpot& spot : spots) {
         cout << "Spot " << spot.getSpotNumber() << ": ";
 
         Vehicle* vehicle = spot.getVehicle();
