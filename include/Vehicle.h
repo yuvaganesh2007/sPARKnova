@@ -11,6 +11,7 @@ class Vehicle {
         virtual void inputDetails()=0;
         virtual void displayDetails()=0;
         string getNumber();
+        virtual double getHourlyRate()=0;
         
         friend void setDetails(Vehicle*);
         friend void getDetails(Vehicle*);
@@ -24,6 +25,7 @@ class Car: public Vehicle {
     public:
         void inputDetails() override;
         void displayDetails() override;
+        double getHourlyRate() override;
 
 };
 
@@ -33,6 +35,7 @@ class Bike: public Vehicle {
     public:
         void inputDetails() override;
         void displayDetails() override;
+        double getHourlyRate() override;
 };
 
 

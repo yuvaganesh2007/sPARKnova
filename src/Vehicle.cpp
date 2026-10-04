@@ -19,9 +19,15 @@ void Car::displayDetails() {
     cout<<"Number of seats: "<<seats<<'\n';
 }
 
+double Car::getHourlyRate() {
+    if(seats==5) return 100.0;
+    else return 120.0;
+    return 0.0;
+}
+
 void Bike::inputDetails() {
     Vehicle::inputDetails();
-    cout<<"Enter bike type: ";
+    cout<<"Enter bike type (Scooty or Gear): ";
     cin>>type;
 }
 
@@ -29,6 +35,12 @@ void Bike::displayDetails() {
     cout<<"\n---Bike Deatils---\n";
     cout<<"Bike Number: "<<number<<'\n';
     cout<<"Bike type: "<<type<<'\n';
+}
+
+double Bike::getHourlyRate() {
+    if(type=="Scooty"||type=="scooty") return 50.0;
+    else if(type=="Gear"||type=="gear") return 70.0;
+    return 0.0;
 }
 
 void setDetails(Vehicle* v) { v->inputDetails(); }
