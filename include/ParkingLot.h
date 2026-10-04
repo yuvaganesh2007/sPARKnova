@@ -39,10 +39,10 @@ public:
         CheckoutQuote& quote);
 
     bool completeCheckout(CheckoutQuote& quote);
-    void recordPaymentFailure( const CheckoutQuote& quote);
+    void recordPaymentFailure(CheckoutQuote& quote);
 
     void displayStatus();
-    void displayPaymentHistory() const;
+    void displayPaymentHistory() ;
 };
 
 #endif
