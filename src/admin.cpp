@@ -1,55 +1,71 @@
-#include<bits/stdc++.h>
+#include "../include/admin.h"
+#include <bits/stdc++.h>
+
 using namespace std;
 
-const int MAX=100;
-int users=0;
+Admin::Admin(const string& password, ParkingLot& parkingLot)
+    : password(password), parkingLot(parkingLot) {}
 
-class Vehicle {
-    protected:
-        string number;
-    
-    public:
-        string select_type() {
-            cout<<"Select the type of vehicle:\n";
-            cout<<"1. Car\n2. Bike\n";
-        }
-    
-};
+bool Admin::login() {
+    string enteredPassword;
 
-class car: public Vehicle {
+    cout << "Enter admin password: ";
+    std:cin >> enteredPassword;
 
-};
-
-class bike: public Vehicle  {
-
-};
-
-class User{ 
-    protected:
-        string name,mobile_no;
-        Vehicle vehicle;
-    
-};
-
-User arr[MAX];
-
-int main() {
-    cout<<"Welcome to sPARKnova \n";
-    cout<<"Who's trying to use:\n";
-    cout<<"1. User\n2. Admin\n";
-    int choice;
-    cin>>choice;
-    bool flag=true;
-    while(flag) {
-        switch(choice) {
-            case 1:
-                
-                cout<<"Welcome, ";
-            case 2:
-                cout<<"Welcome, Admin\n";
-
-            default:
-                cout<<"Invalid input, Please try again\n";
-        }
+    if (enteredPassword != password) {
+        cout << "Incorrect password.\n";
+        return false;
     }
+
+    cout << "Login successful.\n";
+    return true;
+}
+
+void Admin::start() {
+    if (!login()) {
+        return;
+    }
+
+    int choice = 0;
+
+    do {
+        cout << "\n--- Admin Menu ---\n"
+            << "1. Park a car\n"
+            << "2. Park a bike\n"
+            << "3. Remove a vehicle\n"
+            << "4. View parking status\n"
+            << "5. Exit\n"
+            << "Choose an option: ";
+
+        if (!(cin >> choice)) {
+            cout << "Please enter a number.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+            continue;
+        }
+
+        if (choice == 1) {
+            auto car = make_unique<Car>();
+            car->inputDetails();
+            parkingLot.parkVehicle(move(car));
+        } 
+        else if (choice == 2) {
+            auto bike = make_unique<Bike>();
+            bike->inputDetails();
+            parkingLot.parkVehicle(move(bike));
+        }
+        else if (choice == 3) {
+            string number;
+            cout << "Enter vehicle number to remove: ";
+            cin >> number;
+            parkingLot.removeVehicle(number);
+        } 
+        else if (choice == 4) {
+            parkingLot.displayStatus();
+        } 
+        else if (choice != 5) {
+            cout << "Invalid option.\n";
+        }
+
+    } while (choice != 5);
 }
