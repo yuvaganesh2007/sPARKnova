@@ -5,6 +5,7 @@ void Vehicle::inputDetails() {
     cin>>number;
 }
 
+string Vehicle::getNumber() { return number; }
 void Car::inputDetails() {
     Vehicle::inputDetails();
 

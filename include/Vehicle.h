@@ -10,7 +10,8 @@ class Vehicle {
     public:
         virtual void inputDetails()=0;
         virtual void displayDetails()=0;
-
+        string getNumber();
+        
         friend void setDetails(Vehicle*);
         friend void getDetails(Vehicle*);
         virtual ~Vehicle() {}
