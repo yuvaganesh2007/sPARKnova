@@ -122,10 +122,10 @@ void ParkingLot::recordPaymentFailure(const CheckoutQuote& quote) {
     std::cout << "Payment not completed. Vehicle remains parked.\n";
 }
 
-void ParkingLot::displayStatus() const {
+void ParkingLot::displayStatus() {
     cout << "\n--- Parking Lot Status ---\n";
 
-    for (const ParkingSpot& spot : spots) {
+    for (ParkingSpot& spot : spots) {
         cout << "Spot " << spot.getSpotNumber() << ": ";
 
         Vehicle* vehicle = spot.getVehicle();
