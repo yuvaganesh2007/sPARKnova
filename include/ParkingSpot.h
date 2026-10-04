@@ -16,5 +16,5 @@ class ParkingSpot {
         Vehicle* getVehicle();
 
         bool assignVehicle(unique_ptr<Vehicle> newvehicle);
-        bool releaseVehicle(string& vehicleNumber);
+        bool clearVehicle(string& vehicleNumber);
 };

@@ -95,7 +95,7 @@ bool ParkingLot::completeCheckout( CheckoutQuote& quote) {
                 true
             });
 
-            spot.releaseVehicle(string& vehicle->getNumber());
+            spot.clearVehicle(string vehicle->getNumber());
 
             cout << "Payment completed.\n"
                       << "Vehicle checked out from spot "
@@ -108,7 +108,7 @@ bool ParkingLot::completeCheckout( CheckoutQuote& quote) {
     return false;
 }
 
-void ParkingLot::recordPaymentFailure(const CheckoutQuote& quote) {
+void ParkingLot::recordPaymentFailure(CheckoutQuote& quote) {
     paymentRecords.push_back({
         quote.vehicleNumber,
         quote.spotNumber,
@@ -141,7 +141,7 @@ void ParkingLot::displayStatus() {
     }
 }
 
-void ParkingLot::displayPaymentHistory() const {
+void ParkingLot::displayPaymentHistory() {
     cout << "\n--- Checkout and Payment History ---\n";
 
     if (paymentRecords.empty()) {
@@ -149,7 +149,7 @@ void ParkingLot::displayPaymentHistory() const {
         return;
     }
 
-    for (const ParkingRecord& record : paymentRecords) {
+    for ( ParkingRecord& record : paymentRecords) {
         cout << "\nVehicle: " << record.vehicleNumber
                   << "\nSpot: " << record.spotNumber
                   << "\nParked duration: " << record.parkedHours
