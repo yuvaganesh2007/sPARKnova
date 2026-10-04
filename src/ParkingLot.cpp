@@ -95,7 +95,7 @@ bool ParkingLot::completeCheckout( CheckoutQuote& quote) {
                 true
             });
 
-            spot.clearVehicle();
+            spot.releaseVehicle(string& vehicle->getNumber());
 
             cout << "Payment completed.\n"
                       << "Vehicle checked out from spot "
