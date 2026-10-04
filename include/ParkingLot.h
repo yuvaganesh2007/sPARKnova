@@ -32,16 +32,13 @@ private:
 public:
     explicit ParkingLot(int numberOfSpots);
     bool parkVehicle(std::unique_ptr<Vehicle> vehicle);
-    optional<CheckoutQuote> createCheckoutQuote(
-        string& vehicleNumber,
-        int parkedHours,
-        int parkedMinutes);
+    optional<CheckoutQuote> createCheckoutQuote(string& vehicleNumber, int parkedHours,int parkedMinutes);
 
-        bool completeCheckout(CheckoutQuote& quote);
-        void recordPaymentFailure(CheckoutQuote& quote);
+    bool completeCheckout(CheckoutQuote& quote);
+    void recordPaymentFailure(CheckoutQuote& quote);
 
-        void displayStatus();
-        void displayPaymentHistory();
+    void displayStatus();
+    void displayPaymentHistory();
 };
 
 #endif

@@ -13,6 +13,11 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
         return false;
     }
 
+    if(vehicle->getHourlyRate()<=0) {
+        cout<<"Invalid bike type or car seat count.\n";
+        return false;
+    }
+
     for (ParkingSpot& spot : spots) {
         Vehicle* parked = spot.getVehicle();
 
@@ -27,8 +32,7 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
             const int assignedSpot = spot.getSpotNumber();
 
             if (spot.assignVehicle(move(vehicle))) {
-                cout << "Vehicle parked in spot "
-                          << assignedSpot << ".\n";
+                cout << "Vehicle parked in spot "<< assignedSpot << ".\n";
                 return true;
             }
         }
