@@ -15,7 +15,7 @@ public:
 
     bool parkVehicle(std::unique_ptr<Vehicle> vehicle);
     bool removeVehicle(const std::string& vehicleNumber);
-    void displayStatus() const;
+    void displayStatus() ;
 };
 
 #endif
