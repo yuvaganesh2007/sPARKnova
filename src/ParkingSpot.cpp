@@ -17,7 +17,7 @@ bool ParkingSpot::assignVehicle(unique_ptr<Vehicle> newvehicle) {
     return true;
 }
 
-bool ParkingSpot::clearVehicle(string& vehicleNumber) {
+bool ParkingSpot::clearVehicle(string vehicleNumber) {
     if(!isOccupied()||vehicle->getNumber()!=vehicleNumber) {
         return false;
     }
