@@ -11,6 +11,8 @@ private:
     ParkingLot& parkingLot;
 
     bool login();
+    void checkInVehicle();
+    void checkOutVehicle();
 
 public:
     explicit Admin(const string& password, ParkingLot& parkingLot);
