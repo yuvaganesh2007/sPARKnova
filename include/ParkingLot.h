@@ -54,6 +54,7 @@ public:
     bool completeCheckout(CheckoutQuote& quote);
     void recordPaymentFailure(CheckoutQuote& quote);
 
+    void displayVehicleDetails(const string& vehicleNumber);
     void displayStatus();
     void displayPaymentHistory() ;
 };

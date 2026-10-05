@@ -188,6 +188,38 @@ void ParkingLot::displayStatus() {
     cout << "Available spots: " << availableSpots << '\n';
 }
 
+void ParkingLot::displayVehicleDetails(const string& vehicleNumber){
+    for(ParkingSpot& spot: spots){
+        Vehicle* vehicle = spot.getVehicle();
+
+        if(vehicle != nullptr&& vehicle->getNumber()== vehicleNumber){
+            const auto checkIn=checkInTimes.find(vehicleNumber);
+            
+            if(checkIn==checkInTimes.end()){
+                cout<<"Check-in time is unavailable.\n";
+                return;
+            }
+            
+            cout << "\n========================================\n"
+                 << "YOUR PARKING DETAILS\n"
+                 << "Spot number: " << spot.getSpotNumber() << '\n'
+                 << "Check-in time: "
+                 << setfill('0') << setw(2) << checkIn->second.hour
+                 << ':' << setw(2) << checkIn->second.minute
+                 << setfill(' ') << '\n'
+                 << "Vehicle details:\n";
+            vehicle->displayDetails();
+
+            cout << "========================================\n";
+            return;
+        }
+
+    }
+    cout << "No currently parked vehicle found with that number.\n";
+}
+
+
+
 void ParkingLot::displayPaymentHistory() {
     cout << "\n--- Checkout and Payment History ---\n";
 
