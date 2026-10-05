@@ -95,7 +95,7 @@ bool ParkingLot::completeCheckout( CheckoutQuote& quote) {
                 true
             });
 
-            spot.clearVehicle(string vehicle->getNumber());
+            spot.clearVehicle(string (vehicle->getNumber()));
 
             cout << "Payment completed.\n"
                       << "Vehicle checked out from spot "
@@ -131,11 +131,10 @@ void ParkingLot::displayStatus() {
         Vehicle* vehicle = spot.getVehicle();
 
         if (vehicle == nullptr) {
-            cout << "Available\n";
+            continue;
+            //cout << "Available\n";
         } else {
-            cout << "Occupied\n"
-                      << "Vehicle number: "
-                      << vehicle->getNumber() << '\n';
+            cout << "Occupied\n"<< "Vehicle number: "<< vehicle->getNumber() << '\n';
             vehicle->displayDetails();
         }
     }
