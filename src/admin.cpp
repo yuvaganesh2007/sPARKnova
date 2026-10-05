@@ -23,6 +23,7 @@ bool Admin::login() {
 
 void Admin::checkInVehicle() {
     int vehicleChoice;
+    int checkInHour, checkInMinute;
 
     cout << "\n1. Car\n"
          << "2. Bike\n"
@@ -47,44 +48,39 @@ void Admin::checkInVehicle() {
     }
 
     vehicle->inputDetails();
-    parkingLot.parkVehicle(move(vehicle));
+    cout << "Enter check-in time (24-hour format, HH MM): ";
+    if (!(cin >> checkInHour >> checkInMinute) || checkInHour < 0 || checkInHour > 23 ||
+        checkInMinute < 0 || checkInMinute > 59) {
+        cout << "Invalid time. Enter hours 0-23 and minutes 0-59.\n";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return;
+    }
+    parkingLot.parkVehicle(move(vehicle), checkInHour, checkInMinute);
 }
 
 void Admin::checkOutVehicle() {
     string vehicleNumber;
-    int parkedHours;
-    int parkedMinutes;
+    int checkoutHour;
+    int checkoutMinute;
 
     cout << "Enter vehicle number: ";
     cin >> vehicleNumber;
 
-    cout << "Enter parked hours: ";
-    if (!(cin >> parkedHours)) {
-        cout << "Invalid hours.\n";
+    cout << "Enter checkout time (24-hour format, HH MM): ";
+    if (!(cin >> checkoutHour >> checkoutMinute) || checkoutHour < 0 || checkoutHour > 23 ||
+        checkoutMinute < 0 || checkoutMinute > 59) {
+        cout << "Invalid time. Enter hours 0-23 and minutes 0-59.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return;
-    }
-
-    cout << "Enter additional parked minutes (0-59): ";
-    if (!(cin >> parkedMinutes)) {
-        cout << "Invalid minutes.\n";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return;
-    }
-
-    if (parkedHours < 0 || parkedMinutes < 0 || parkedMinutes > 59) {
-        cout << "Hours must be non-negative and minutes must be "
-             << "between 0 and 59.\n";
         return;
     }
 
     CheckoutQuote quote;
 
     if (!parkingLot.createCheckoutQuote(
-            vehicleNumber, parkedHours, parkedMinutes, quote)) {
-        cout << "Vehicle not found, or parking duration is invalid.\n";
+            vehicleNumber, checkoutHour, checkoutMinute, quote)) {
+        cout << "Vehicle not found, or parking time is unavailable.\n";
         return;
     }
 
@@ -92,8 +88,10 @@ void Admin::checkOutVehicle() {
     cout << "\n--- Checkout Bill ---\n"
          << "Vehicle: " << quote.vehicleNumber << '\n'
          << "Spot: " << quote.spotNumber << '\n'
-         << "Parked duration: " << quote.parkedHours
-         << " hour(s), " << quote.parkedMinutes << " minute(s)\n"
+         << "Check-in time: " << setfill('0') << setw(2) << quote.checkInHour
+         << ':' << setw(2) << quote.checkInMinute << setfill(' ') << '\n'
+         << "Check-out time: " << setfill('0') << setw(2) << quote.checkOutHour
+         << ':' << setw(2) << quote.checkOutMinute << setfill(' ') << '\n'
          << "Rate per hour: Rs. " << quote.hourlyRate << '\n'
          << "Total amount: Rs. " << quote.totalAmount << '\n';
 
