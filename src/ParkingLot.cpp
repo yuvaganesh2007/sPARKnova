@@ -8,20 +8,25 @@ ParkingLot::ParkingLot(int numberOfSpots) {
     }
 }
 
-bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
+bool ParkingLot::parkVehicle(
+    unique_ptr<Vehicle> vehicle,
+    int checkInHour,
+    int checkInMinute
+) {
     if (vehicle == nullptr) {
         return false;
     }
 
-    if(vehicle->getHourlyRate()<=0.0) {
-        cout<<"Invalid bike type or car seat count.\n";
+    if (vehicle->getHourlyRate() <= 0.0) {
+        cout << "Invalid bike type or car seat count.\n";
         return false;
     }
 
     for (ParkingSpot& spot : spots) {
         Vehicle* parked = spot.getVehicle();
 
-        if (parked != nullptr && parked->getNumber() == vehicle->getNumber()) {
+        if (parked != nullptr &&
+            parked->getNumber() == vehicle->getNumber()) {
             cout << "That vehicle is already parked.\n";
             return false;
         }
@@ -29,10 +34,17 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
 
     for (ParkingSpot& spot : spots) {
         if (!spot.isOccupied()) {
-             int assignedSpot = spot.getSpotNumber();
+            int assignedSpot = spot.getSpotNumber();
+            const string vehicleNumber = vehicle->getNumber();
 
             if (spot.assignVehicle(move(vehicle))) {
-                cout << "Vehicle parked in spot "<< assignedSpot << ".\n";
+                checkInTimes[vehicleNumber] = {
+                    checkInHour,
+                    checkInMinute
+                };
+
+                cout << "Vehicle parked in spot "
+                     << assignedSpot << ".\n";
                 return true;
             }
         }
@@ -42,14 +54,14 @@ bool ParkingLot::parkVehicle(unique_ptr<Vehicle> vehicle) {
     return false;
 }
 
-
 bool ParkingLot::createCheckoutQuote(
     string& vehicleNumber,
-    int parkedHours,
-    int parkedMinutes,
-    CheckoutQuote& quote)  {
-
-    if (parkedHours < 0 || parkedMinutes < 0 || parkedMinutes > 59) {
+    int checkoutHour,
+    int checkoutMinute,
+    CheckoutQuote& quote
+) {
+    if (checkoutHour < 0 || checkoutHour > 23 ||
+        checkoutMinute < 0 || checkoutMinute > 59) {
         return false;
     }
 
@@ -58,15 +70,35 @@ bool ParkingLot::createCheckoutQuote(
 
         if (vehicle != nullptr &&
             vehicle->getNumber() == vehicleNumber) {
+            const auto checkIn = checkInTimes.find(vehicleNumber);
 
-            const double totalHours =
-                parkedHours + parkedMinutes / 60.0;
+            if (checkIn == checkInTimes.end()) {
+                return false;
+            }
+
+            int elapsedMinutes =
+                checkoutHour * 60 + checkoutMinute -
+                (checkIn->second.hour * 60 +
+                 checkIn->second.minute);
+
+            // Allows checkout after midnight.
+            if (elapsedMinutes < 0) {
+                elapsedMinutes += 24 * 60;
+            }
+
+            const int parkedHours = elapsedMinutes / 60;
+            const int parkedMinutes = elapsedMinutes % 60;
+            const double totalHours = elapsedMinutes / 60.0;
             const double hourlyRate = vehicle->getHourlyRate();
 
             quote.vehicleNumber = vehicleNumber;
             quote.spotNumber = spot.getSpotNumber();
             quote.parkedHours = parkedHours;
             quote.parkedMinutes = parkedMinutes;
+            quote.checkInHour = checkIn->second.hour;
+            quote.checkInMinute = checkIn->second.minute;
+            quote.checkOutHour = checkoutHour;
+            quote.checkOutMinute = checkoutMinute;
             quote.hourlyRate = hourlyRate;
             quote.totalAmount = hourlyRate * totalHours;
 
@@ -77,34 +109,38 @@ bool ParkingLot::createCheckoutQuote(
     return false;
 }
 
-bool ParkingLot::completeCheckout( CheckoutQuote& quote) {
+bool ParkingLot::completeCheckout(CheckoutQuote& quote) {
     for (ParkingSpot& spot : spots) {
         Vehicle* vehicle = spot.getVehicle();
 
         if (vehicle != nullptr &&
             vehicle->getNumber() == quote.vehicleNumber &&
             spot.getSpotNumber() == quote.spotNumber) {
-
             paymentRecords.push_back({
                 quote.vehicleNumber,
                 quote.spotNumber,
                 quote.parkedHours,
                 quote.parkedMinutes,
+                quote.checkInHour,
+                quote.checkInMinute,
+                quote.checkOutHour,
+                quote.checkOutMinute,
                 quote.hourlyRate,
                 quote.totalAmount,
                 true
             });
 
-            spot.clearVehicle(string (vehicle->getNumber()));
+            spot.clearVehicle(vehicle->getNumber());
+            checkInTimes.erase(quote.vehicleNumber);
 
             cout << "Payment completed.\n"
-                      << "Vehicle checked out from spot "
-                      << quote.spotNumber << ".\n";
+                 << "Vehicle checked out from spot "
+                 << quote.spotNumber << ".\n";
             return true;
         }
     }
 
-    std::cout << "Checkout failed: vehicle was not found in that spot.\n";
+    cout << "Checkout failed: vehicle was not found in that spot.\n";
     return false;
 }
 
@@ -114,30 +150,42 @@ void ParkingLot::recordPaymentFailure(CheckoutQuote& quote) {
         quote.spotNumber,
         quote.parkedHours,
         quote.parkedMinutes,
+        quote.checkInHour,
+        quote.checkInMinute,
+        quote.checkOutHour,
+        quote.checkOutMinute,
         quote.hourlyRate,
         quote.totalAmount,
         false
     });
 
-    std::cout << "Payment not completed. Vehicle remains parked.\n";
+    cout << "Payment not completed. Vehicle remains parked.\n";
 }
 
 void ParkingLot::displayStatus() {
     cout << "\n--- Parking Lot Status ---\n";
 
-    for (ParkingSpot& spot : spots) {
-        cout << "Spot " << spot.getSpotNumber() << ": ";
+    int availableSpots = 0;
 
+    for (ParkingSpot& spot : spots) {
         Vehicle* vehicle = spot.getVehicle();
 
         if (vehicle == nullptr) {
+            ++availableSpots;
             continue;
-            //cout << "Available\n";
-        } else {
-            cout << "Occupied\n"<< "Vehicle number: "<< vehicle->getNumber() << '\n';
-            vehicle->displayDetails();
         }
+
+        cout << "\n========================================\n"
+             << "PARKED VEHICLE\n"
+             << "Spot number: " << spot.getSpotNumber() << '\n'
+             << "Status: Occupied\n";
+
+        vehicle->displayDetails();
+
+        cout << "========================================\n";
     }
+
+    cout << "Available spots: " << availableSpots << '\n';
 }
 
 void ParkingLot::displayPaymentHistory() {
@@ -148,18 +196,23 @@ void ParkingLot::displayPaymentHistory() {
         return;
     }
 
-    for ( ParkingRecord& record : paymentRecords) {
+    for (ParkingRecord& record : paymentRecords) {
         cout << "\nVehicle: " << record.vehicleNumber
-                  << "\nSpot: " << record.spotNumber
-                  << "\nParked duration: " << record.parkedHours
-                  << " hour(s), " << record.parkedMinutes << " minute(s)"
-                  << "\nRate per hour: Rs. " << record.hourlyRate
-                  << "\nAmount: Rs. " << fixed << setprecision(2)
-                  << record.amount
-                  << "\nPayment status: "
-                  << (record.paymentCompleted
-                          ? "Completed"
-                          : "Not completed")
-                  << '\n';
+             << "\nSpot: " << record.spotNumber
+             << "\nCheck-in time: "
+             << setfill('0') << setw(2) << record.checkInHour
+             << ':' << setw(2) << record.checkInMinute
+             << "\nCheck-out time: "
+             << setw(2) << record.checkOutHour
+             << ':' << setw(2) << record.checkOutMinute
+             << setfill(' ')
+             << "\nRate per hour: Rs. " << record.hourlyRate
+             << "\nAmount: Rs. " << fixed << setprecision(2)
+             << record.amount
+             << "\nPayment status: "
+             << (record.paymentCompleted
+                     ? "Completed"
+                     : "Not completed")
+             << '\n';
     }
 }

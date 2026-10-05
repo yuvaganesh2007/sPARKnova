@@ -4,11 +4,19 @@
 #include "ParkingSpot.h"
 #include <bits/stdc++.h>
 using namespace std;
+struct CheckInTime {
+    int hour;
+    int minute;
+};
 struct CheckoutQuote {
     std::string vehicleNumber;
     int spotNumber;
     int parkedHours;
     int parkedMinutes;
+    int checkInHour;
+    int checkInMinute;
+    int checkOutHour;
+    int checkOutMinute;
     double hourlyRate;
     double totalAmount;
 };
@@ -18,6 +26,10 @@ struct ParkingRecord {
     int spotNumber;
     int parkedHours;
     int parkedMinutes;
+    int checkInHour;
+    int checkInMinute;
+    int checkOutHour;
+    int checkOutMinute;
     double hourlyRate;
     double amount;
     bool paymentCompleted;
@@ -28,14 +40,15 @@ class ParkingLot {
 private:
     vector<ParkingSpot> spots;
     vector<ParkingRecord> paymentRecords;
+    unordered_map<string, CheckInTime> checkInTimes;
 
 public:
     explicit ParkingLot(int numberOfSpots);
-    bool parkVehicle(std::unique_ptr<Vehicle> vehicle);
+    bool parkVehicle(std::unique_ptr<Vehicle> vehicle, int checkInHour, int checkInMinute);
      bool createCheckoutQuote(
         string& vehicleNumber,
-        int parkedHours,
-        int parkedMinutes,
+        int checkoutHour,
+        int checkoutMinute,
         CheckoutQuote& quote);
 
     bool completeCheckout(CheckoutQuote& quote);
