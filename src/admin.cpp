@@ -34,14 +34,18 @@ bool Admin::login() {
 
     cout << "Enter admin password: ";
     enteredPassword=getMaskedPassword();
-
-    if (enteredPassword != password) {
+    
+    //exception handling password
+    try {
+        if(enteredPassword!=password) throw false;
+        cout << "Login successful.\n";
+        return true;
+    }
+    catch( bool e) {
         cout << "Incorrect password.\n";
         return false;
     }
-
-    cout << "Login successful.\n";
-    return true;
+    
 }
 
 void Admin::checkInVehicle() {
@@ -51,8 +55,12 @@ void Admin::checkInVehicle() {
     cout << "\n1. Car\n"
          << "2. Bike\n"
          << "Choose vehicle type: ";
-
-    if (!(cin >> vehicleChoice)) {
+    //exception handling
+    try {
+        if (!(cin >> vehicleChoice)) throw 0;
+    }
+    
+    catch(...) {
         cout << "Invalid input.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -60,20 +68,32 @@ void Admin::checkInVehicle() {
     }
 
     unique_ptr<Vehicle> vehicle;
+    //exception handling vehicle choice
+    try{
+        if (vehicleChoice == 1) {
+            vehicle = make_unique<Car>();
+        } 
+        else if (vehicleChoice == 2) {
+            vehicle = make_unique<Bike>();
+        }
 
-    if (vehicleChoice == 1) {
-        vehicle = make_unique<Car>();
-    } else if (vehicleChoice == 2) {
-        vehicle = make_unique<Bike>();
-    } else {
+        else throw 0;
+    }
+
+    catch(...) {
         cout << "Invalid vehicle type.\n";
         return;
     }
 
     vehicle->inputDetails();
-    cout << "Enter check-in time (24-hour format, HH MM): ";
-    if (!(cin >> checkInHour >> checkInMinute) || checkInHour < 0 || checkInHour > 23 ||
-        checkInMinute < 0 || checkInMinute > 59) {
+    
+    //exception handling time input
+    try{
+        cout << "Enter check-in time (24-hour format, HH MM): ";
+        cin >> checkInHour >> checkInMinute;
+        if (checkInHour < 0 || checkInHour > 23 || checkInMinute < 0 || checkInMinute > 59) throw 0;
+    }
+    catch(...) {
         cout << "Invalid time. Enter hours 0-23 and minutes 0-59.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -89,10 +109,14 @@ void Admin::checkOutVehicle() {
 
     cout << "Enter vehicle number: ";
     cin >> vehicleNumber;
-
-    cout << "Enter checkout time (24-hour format, HH MM): ";
-    if (!(cin >> checkoutHour >> checkoutMinute) || checkoutHour < 0 || checkoutHour > 23 ||
-        checkoutMinute < 0 || checkoutMinute > 59) {
+    //exception handling checkout time
+    try {
+        cout << "Enter checkout time (24-hour format, HH MM): ";
+        cin >> checkoutHour >> checkoutMinute;
+        if (checkoutHour < 0 || checkoutHour > 23 ||
+        checkoutMinute < 0 || checkoutMinute > 59) throw 0;
+    }
+    catch(...) {
         cout << "Invalid time. Enter hours 0-23 and minutes 0-59.\n";
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -100,9 +124,12 @@ void Admin::checkOutVehicle() {
     }
 
     CheckoutQuote quote;
-
-    if (!parkingLot.createCheckoutQuote(
-            vehicleNumber, checkoutHour, checkoutMinute, quote)) {
+    //exception handling vehicle not found
+    try{
+        if (!parkingLot.createCheckoutQuote(vehicleNumber, checkoutHour, checkoutMinute, quote)) 
+            throw 0;
+    }
+    catch(...) {
         cout << "Vehicle not found, or parking time is unavailable.\n";
         return;
     }
@@ -126,12 +153,16 @@ void Admin::checkOutVehicle() {
              << "2. No - payment not completed\n"
              << "Choose: ";
 
-        if (!(cin >> paymentChoice)) {
+        try {
+            if (!(cin >> paymentChoice)) throw 0;
+        }
+        catch(...) {
             cout << "Enter 1 or 2.\n";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             paymentChoice = 0;
         }
+
     } while (paymentChoice != 1 && paymentChoice != 2);
 
     if (paymentChoice == 1) {
@@ -156,12 +187,15 @@ void Admin::start() {
              << "4. View payment history\n"
              << "5. Exit\n"
              << "Choose an option: ";
-
-        if (!(cin >> choice)) {
+             
+        try {
+            if (!(cin >> choice)) throw 0;
+        }
+        catch(...) {
             cout << "Please enter a number.\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            continue;
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continue;
         }
 
         switch (choice) {
