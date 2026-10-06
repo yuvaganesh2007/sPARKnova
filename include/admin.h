@@ -15,6 +15,7 @@ private:
     void checkOutVehicle();
 
 public:
+    //explicit parameterized constructor
     explicit Admin(const string& password, ParkingLot& parkingLot);
     void start();
 };

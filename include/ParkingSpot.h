@@ -9,6 +9,7 @@ class ParkingSpot {
         unique_ptr<Vehicle> vehicle;
 
     public:
+        //explicit Constructor
         explicit ParkingSpot(int spot);
 
         int getSpotNumber();

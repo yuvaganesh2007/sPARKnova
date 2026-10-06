@@ -4,12 +4,14 @@
 #include "ParkingSpot.h"
 #include <bits/stdc++.h>
 using namespace std;
+
 struct CheckInTime {
     int hour;
     int minute;
 };
+
 struct CheckoutQuote {
-    std::string vehicleNumber;
+    string vehicleNumber;
     int spotNumber;
     int parkedHours;
     int parkedMinutes;
@@ -22,7 +24,7 @@ struct CheckoutQuote {
 };
 
 struct ParkingRecord {
-    std::string vehicleNumber;
+    string vehicleNumber;
     int spotNumber;
     int parkedHours;
     int parkedMinutes;
@@ -45,11 +47,7 @@ private:
 public:
     explicit ParkingLot(int numberOfSpots);
     bool parkVehicle(std::unique_ptr<Vehicle> vehicle, int checkInHour, int checkInMinute);
-     bool createCheckoutQuote(
-        string& vehicleNumber,
-        int checkoutHour,
-        int checkoutMinute,
-        CheckoutQuote& quote);
+    bool createCheckoutQuote(string& vehicleNumber, int checkoutHour, int checkoutMinute, CheckoutQuote& quote);
 
     bool completeCheckout(CheckoutQuote& quote);
     void recordPaymentFailure(CheckoutQuote& quote);
