@@ -8,9 +8,19 @@ void Vehicle::inputDetails() {
 string Vehicle::getNumber() { return number; }
 void Car::inputDetails() {
     Vehicle::inputDetails();
-
-    cout<<"Enter number of seats: ";
-    cin>>seats;
+    bool flag=true;
+    //exception handling in car type input
+    do {
+        try{
+            cout<<"Enter number of seats: ";
+            cin>>seats;
+            if(seats!=5&&seats!=7) throw 0;
+            flag=false;
+        }
+        catch(...) {
+            cout<<"Invalid car type, Please Try Again\n";
+        }
+    }while(flag);
 }
 
 void Car::displayDetails() {
@@ -27,8 +37,20 @@ double Car::getHourlyRate() {
 
 void Bike::inputDetails() {
     Vehicle::inputDetails();
-    cout<<"Enter bike type (Scooty or Gear): ";
-    cin>>type;
+    bool flag=true;
+    //exception handling in bike type input
+    do {
+        try{
+            cout<<"Enter bike type (Scooty or Gear): ";
+            cin>>type;
+            if(type!="Scooty"&&type!="scooty"&&
+            type!="Gear"&&type!="gear") throw 0;
+            flag=false;
+        }
+        catch(...) {
+            cout<<"Invalid bike type, Please Try Again\n";
+        }
+    }while(flag);
 }
 
 void Bike::displayDetails() {
