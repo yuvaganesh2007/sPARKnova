@@ -13,7 +13,8 @@ private:
     bool login();
     void checkInVehicle();
     void checkOutVehicle();
-
+    string getMaskedPassword();
+    
 public:
     //explicit parameterized constructor
     explicit Admin(const string& password, ParkingLot& parkingLot);
