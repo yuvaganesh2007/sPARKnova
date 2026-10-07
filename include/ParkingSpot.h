@@ -9,7 +9,7 @@ class ParkingSpot {
         unique_ptr<Vehicle> vehicle;
 
     public:
-        //explicit Constructor
+        //explicit Constructor-->Used for preventing the compiler from type conversions
         explicit ParkingSpot(int spot);
 
         int getSpotNumber();

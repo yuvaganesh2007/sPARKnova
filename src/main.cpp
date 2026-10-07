@@ -18,12 +18,31 @@ int main() {
         <<"3. Exit\n"
         << "Choose an option: ";
 
-        if(!(cin>>choice)){
-            cout<<"Please enter a number.\n";
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(),'\n');
+    string input;
+    int choice;
+
+    while (true) {
+        cout << "Enter a number: ";
+        cin >> input; // Read as raw text
+
+        try {
+            // 1. Attempt to convert the string to an integer
+            choice = stoi(input); 
+            
+            cout << "You entered: " << choice << "\n";
+            break; // Valid input, exit loop
+            
+        } catch (const invalid_argument& e) {
+            // 2. Thrown if the string is not a number (e.g., "abc")
+            cout << "Error: Please enter a number.\n";
+            continue;
+            
+        } catch (const out_of_range& e) {
+            // 3. Thrown if the number is too big for an int
+            cout << "Error: Number is too large.\n";
             continue;
         }
+    }
 
         switch(choice){
             case 1:
