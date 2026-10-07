@@ -1,4 +1,8 @@
 #include "../include/ParkingLot.h"
+#include <fstream>      // For std::ofstream, std::fstream, and file operations
+#include <iomanip>      // For std::setw, std::setfill, std::left, std::right
+#include <string>       // For std::string and the .find() method
+#include <iostream>     // (Optional) For std::cout / std::cerr if you print error messages
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -101,6 +105,19 @@ bool ParkingLot::createCheckoutQuote(
             quote.checkOutMinute = checkoutMinute;
             quote.hourlyRate = hourlyRate;
             quote.totalAmount = hourlyRate * totalHours;
+//========================================Writing while goingin in to the CSV================================================================================
+
+            std::ofstream logFile("../include/parking_log.txt", ios::app);
+    if (logFile.is_open()) {
+        logFile << std::left 
+                << std::setw(15) << vehicle->getNumber() // from your unique_ptr
+                << std::setw(6)  << quote.spotNumber
+                << std::setw(8)  << vehicle->getHourlyRate() 
+                << std::right << std::setfill('0') << std::setw(2) << quote.checkInHour << ":" 
+                << std::setw(2) << quote.checkInMinute << std::setfill(' ') << std::left 
+                << "  --:--  --    --    --------  Parked\n";
+        logFile.close();
+    }
 
             return true;
         }
@@ -136,6 +153,40 @@ bool ParkingLot::completeCheckout(CheckoutQuote& quote) {
             cout << "Payment completed.\n"
                  << "Vehicle checked out from spot "
                  << quote.spotNumber << ".\n";
+//========================================Writing while going out in to the CSV================================================================================
+          
+
+
+                 // 2. OVERWRITE THE FILE using the quote struct!
+            std::fstream file("../include/parking_log.txt", std::ios::in | std::ios::out);
+            if (file.is_open()) {
+                std::string currentLine;
+                std::streampos previousPos = file.tellg(); 
+
+                while (std::getline(file, currentLine)) {
+                    // Find this specific vehicle that is still parked
+                    if (currentLine.find(quote.vehicleNumber) != std::string::npos && 
+                        currentLine.find("Parked") != std::string::npos) {
+                
+                            size_t offset = currentLine.find("  --:--  --    --    --------  Parked");
+                            if (offset != std::string::npos) {
+                                file.seekp(previousPos + (std::streampos)offset);
+                    
+                                // Use the quote struct to overwrite the data perfectly
+                                file << "  " 
+                                     << std::right << std::setfill('0') << std::setw(2) << quote.checkOutHour << ":" 
+                                     << std::setw(2) << quote.checkOutMinute << std::setfill(' ') << std::left 
+                                     << "  " << std::setw(4) << quote.parkedHours 
+                                     << "  " << std::setw(4) << quote.parkedMinutes 
+                                     << "  " << std::setw(8) << quote.totalAmount 
+                                     << "  " << std::setw(6) << "Left"; 
+                            }
+                            break; // We found and updated it, stop looping
+                        }
+                    previousPos = file.tellg(); 
+                }
+                file.close();
+            }
             return true;
         }
     }

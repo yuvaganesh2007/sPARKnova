@@ -19,18 +19,17 @@ int main() {
         << "Choose an option: ";
 
     string input;
-    int choice;
 
-    while (true) {
-        cout << "Enter a number: ";
+    // while (true) {
+        // cout << "Enter a number: ";
         cin >> input; // Read as raw text
 
         try {
             // 1. Attempt to convert the string to an integer
             choice = stoi(input); 
             
-            cout << "You entered: " << choice << "\n";
-            break; // Valid input, exit loop
+            // cout << "You entered: " << choice << "\n";
+            // break; // Valid input, exit loop
             
         } catch (const invalid_argument& e) {
             // 2. Thrown if the string is not a number (e.g., "abc")
@@ -42,7 +41,7 @@ int main() {
             cout << "Error: Number is too large.\n";
             continue;
         }
-    }
+    // }
 
         switch(choice){
             case 1:
@@ -53,6 +52,7 @@ int main() {
             break;
             case 3:
             cout<<"Goodbye.\n";
+            cout<<choice;
             break;
             default:
             cout<<"Invalid option."<<endl;
