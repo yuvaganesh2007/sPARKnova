@@ -9,7 +9,7 @@ class User {
     ParkingLot& parkingLot;
 
     public:
-        //explicit Constructor
+        //explicit parameterized Constructor
         explicit User(ParkingLot& parkingLot);
         void start();
 };

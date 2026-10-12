@@ -8,8 +8,6 @@ Admin::Admin(const string& password, ParkingLot& parkingLot)
     : password(password), parkingLot(parkingLot) {}
 
 string Admin::getMaskedPassword() {
-    //while (cin.peek() == '\n' || cin.peek() == '\r') { cin.get(); }
-
     string password="";
     char ch;
 
@@ -17,12 +15,12 @@ string Admin::getMaskedPassword() {
         if (ch == '\b') { // Handle Backspace
             if (!password.empty()) {
                 password.pop_back();
-                std::cout << "\b \b"; // Erase the last asterisk from the screen
+                cout << "\b \b"; // Erase the last asterisk from the screen
             }
         } 
         else {
             password.push_back(ch);
-            std::cout << '*'; // Print asterisk instead of the actual character
+            cout << '*'; // Print asterisk instead of the actual character
         }
     }
     cout << endl;
